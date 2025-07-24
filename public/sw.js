@@ -1,9 +1,15 @@
-const CACHE_NAME = "gourav-portfolio-v1.0.0";
+const CACHE_NAME = "gourav-portfolio-v1.0.1";
 const urlsToCache = [
   "/",
   "/index.html",
   "/favicon.svg",
   "/Gourav_Mondal_Resume.pdf",
+  "/assets/css/index-*.css",
+  "/assets/js/vendor-*.js",
+  "/assets/js/main-*.js",
+  "/manifest.json",
+  "/icon-192.png",
+  "/icon-512.png",
 ];
 
 // Install event - cache resources
@@ -29,7 +35,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - serve from cache, fallback to network with improved mobile handling
 self.addEventListener("fetch", (event) => {
   // Skip chrome-extension and other non-http requests
   if (
@@ -39,11 +45,38 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // For HTML navigation requests - use network-first strategy
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          // Clone the response because it's a stream
+          const networkResponseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponseClone);
+          });
+          return networkResponse;
+        })
+        .catch(() => {
+          // If network fails, serve from cache
+          return caches.match("/index.html");
+        })
+    );
+    return;
+  }
+
+  // For API requests - use network-only strategy
+  if (event.request.url.includes("/api/")) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // For static assets - use cache-first strategy
   event.respondWith(
     caches
       .match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
+        // Return cached version if found
         if (response) {
           return response;
         }
@@ -51,7 +84,14 @@ self.addEventListener("fetch", (event) => {
         // Clone the request because it's a stream
         const fetchRequest = event.request.clone();
 
-        return fetch(fetchRequest).then((response) => {
+        // Network request with timeout for mobile
+        return Promise.race([
+          fetch(fetchRequest),
+          new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Network timeout')), 5000);
+          })
+        ])
+        .then((response) => {
           // Check if valid response
           if (
             !response ||
@@ -77,10 +117,19 @@ self.addEventListener("fetch", (event) => {
           }
 
           return response;
+        })
+        .catch((error) => {
+          console.log('Fetch failed:', error);
+          // For image requests, return a fallback image
+          if (event.request.destination === 'image') {
+            return caches.match('/favicon.svg');
+          }
+          // For other requests, just propagate the error
+          throw error;
         });
       })
       .catch(() => {
-        // Return offline page for navigation requests
+        // Return offline page for navigation requests as last resort
         if (event.request.mode === "navigate") {
           return caches.match("/index.html");
         }
@@ -106,15 +155,73 @@ self.addEventListener("activate", (event) => {
 
 // Background sync for offline form submissions
 self.addEventListener("sync", (event) => {
-  if (event.tag === "background-sync") {
-    event.waitUntil(doBackgroundSync());
+  if (event.tag === "contact-form-sync") {
+    event.waitUntil(syncContactForm());
   }
 });
 
-function doBackgroundSync() {
-  // Handle offline form submissions or other background tasks
-  console.log("Background sync triggered");
+// IndexedDB setup for offline form storage
+const dbPromise = indexedDB.open('portfolio-offline-db', 1, (db) => {
+  if (!db.objectStoreNames.contains('contact-forms')) {
+    db.createObjectStore('contact-forms', { keyPath: 'id', autoIncrement: true });
+  }
+});
+
+// Function to store form data when offline
+function storeContactForm(formData) {
+  return dbPromise.then(db => {
+    const tx = db.transaction('contact-forms', 'readwrite');
+    const store = tx.objectStore('contact-forms');
+    store.add(formData);
+    return tx.complete;
+  });
 }
+
+// Function to sync stored form data when back online
+function syncContactForm() {
+  return dbPromise.then(db => {
+    const tx = db.transaction('contact-forms', 'readwrite');
+    const store = tx.objectStore('contact-forms');
+    return store.getAll().then(forms => {
+      return Promise.all(forms.map(form => {
+        // Attempt to send each stored form
+        return fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(form)
+        })
+        .then(response => {
+          if (response.ok) {
+            // If successful, remove from store
+            const tx = db.transaction('contact-forms', 'readwrite');
+            const store = tx.objectStore('contact-forms');
+            return store.delete(form.id).then(() => tx.complete);
+          }
+        });
+      }));
+    });
+  });
+}
+
+// Message handling from main thread
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "STORE_CONTACT_FORM") {
+    storeContactForm(event.data.formData)
+      .then(() => {
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ success: true });
+        }
+      })
+      .catch((error) => {
+        console.error("Error storing contact form:", error);
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ success: false, error: error.message });
+        }
+      });
+  }
+});
 
 // Push notification handling
 self.addEventListener("push", (event) => {

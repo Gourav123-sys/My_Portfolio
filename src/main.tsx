@@ -86,17 +86,83 @@ window.addEventListener("unhandledrejection", (event) => {
   // Send to error tracking service if configured
 });
 
-// Service Worker registration
+// Service Worker registration with enhanced mobile support
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) => {
-        console.log("SW registered: ", registration);
-      })
-      .catch((registrationError) => {
-        console.log("SW registration failed: ", registrationError);
+  window.addEventListener("load", async () => {
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+        updateViaCache: "none" // Ensure fresh service worker on each load
       });
+      console.log("SW registered: ", registration);
+      
+      // Set up background sync for contact form
+      if ("sync" in registration) {
+        // Create a function to handle offline form submissions
+        window.submitContactFormWithBackgroundSync = async (formData) => {
+          try {
+            // Try to submit normally first
+            const response = await fetch("/api/contact", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(formData)
+            });
+            
+            return response.ok;
+          } catch (error) {
+            // If offline, store in IndexedDB and register for sync
+            if (!navigator.onLine) {
+              // Access the storeContactForm function from the service worker
+              await new Promise((resolve) => {
+                const messageChannel = new MessageChannel();
+                messageChannel.port1.onmessage = (event) => resolve(event.data);
+                navigator.serviceWorker.controller?.postMessage({
+                  type: "STORE_CONTACT_FORM",
+                  formData
+                }, [messageChannel.port2]);
+              });
+              
+              // Register for background sync
+              await registration.sync.register("contact-form-sync");
+              return true; // Indicate successful queuing
+            }
+            return false;
+          }
+        };
+      }
+      
+      // Handle service worker updates
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        newWorker?.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            // New service worker available
+            if (confirm("New version available! Reload to update?")) {
+              window.location.reload();
+            }
+          }
+        });
+      });
+    } catch (registrationError) {
+      console.log("SW registration failed: ", registrationError);
+    }
+  });
+  
+  // Handle offline/online events for mobile
+  window.addEventListener("online", () => {
+    document.dispatchEvent(new CustomEvent("app-online"));
+    // Try to sync any pending requests
+    navigator.serviceWorker.ready.then(registration => {
+      if ("sync" in registration) {
+        registration.sync.register("contact-form-sync");
+      }
+    });
+  });
+  
+  window.addEventListener("offline", () => {
+    document.dispatchEvent(new CustomEvent("app-offline"));
   });
 }
 
