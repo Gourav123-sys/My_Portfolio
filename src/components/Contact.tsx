@@ -546,15 +546,16 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
               ) : (
                 /* Developer Note - Remove this in production after setting up EmailJS */
                 <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
-              >
-                <p className="text-sm">
-                  <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
-                </p>
-              </motion.div>
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
+                >
+                  <p className="text-sm">
+                    <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
+                  </p>
+                </motion.div>
+              )
               
               <form
                 ref={formRef}
