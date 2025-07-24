@@ -545,7 +545,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
                   >
                     <p className="text-sm">
-                      <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
+                      <strong>Note:</strong> This contact form is currently set up for demonstration purposes. Feel free to reach out to me directly via email.
                     </p>
                   </motion.div>
                 )}
