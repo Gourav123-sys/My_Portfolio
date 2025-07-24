@@ -210,7 +210,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
       // Get EmailJS credentials from environment variables
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-      const publicKey = import.meta.env.VITE_EMAILJS_USER_ID; // Same env var, different usage
+      const publicKey = import.meta.env.VITE_EMAILJS_USER_ID;
       
       // Check if all required credentials are available
       if (!serviceId || !templateId || !publicKey) {
@@ -225,30 +225,22 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
       const sendingToast = toast.loading("Sending your message...");
       
       try {
-        // Prepare form data for EmailJS
-        // This ensures the form data is properly mapped to template variables
-        const formElement = formRef.current;
-        if (!formElement) {
-          throw new Error('Form reference is not available');
-        }
-
-        // Set form field names to match template variables
-        const nameInput = formElement.querySelector('#name') as HTMLInputElement;
-        const emailInput = formElement.querySelector('#email') as HTMLInputElement;
-        const subjectInput = formElement.querySelector('#subject') as HTMLInputElement;
-        const messageInput = formElement.querySelector('#message') as HTMLTextAreaElement;
+        // Initialize EmailJS with your public key
+        emailjs.init(publicKey);
         
-        if (nameInput) nameInput.name = 'from_name';
-        if (emailInput) emailInput.name = 'from_email';
-        if (subjectInput) subjectInput.name = 'subject';
-        if (messageInput) messageInput.name = 'message';
+        // Prepare template parameters
+        const templateParams = {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message
+        };
         
-        // Send email using EmailJS with the newer API pattern
-        const response = await emailjs.sendForm(
+        // Send email using EmailJS
+        const response = await emailjs.send(
           serviceId,
           templateId,
-          formElement,
-          { publicKey: publicKey }
+          templateParams
         );
         
         // Log success for debugging
@@ -480,18 +472,19 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     y: -4,
                     boxShadow: "0 8px 24px 0 rgba(80,80,180,0.15)",
                   }}
+                  whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 300, damping: 18 }}
-                  className={`flex flex-col items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r ${link.color} cursor-pointer p-1`}
+                  className={`flex flex-col items-center justify-center w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r ${link.color} cursor-pointer p-1`}
                 >
                   {typeof link.icon === "string" ? (
                     <img
                       src={link.icon}
                       alt={link.name}
                       className="mb-1 sm:mb-2 flex-shrink-0"
-                      style={{ width: 24, height: 24 }}
+                      style={{ width: 20, height: 20, maxWidth: '100%' }}
                     />
                   ) : (
-                    <link.icon className="w-5 h-5 sm:w-6 sm:h-6 mb-1 flex-shrink-0" />
+                    <link.icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mb-1 flex-shrink-0" />
                   )}
                   <span className="text-center leading-tight text-xs sm:text-sm px-1 break-words">
                     {link.name === "GeeksforGeeks" ? "GFG" : link.name}
@@ -506,10 +499,10 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
             initial={{ opacity: 0, x: 50 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative order-1 lg:order-2"
+            className="relative order-1 lg:order-2 w-full"
           >
             <div
-              className={`p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border backdrop-blur-sm ${
+              className={`p-3 sm:p-4 md:p-6 lg:p-8 rounded-xl sm:rounded-2xl md:rounded-3xl border backdrop-blur-sm ${
                 isDark
                   ? "bg-gray-800/50 border-gray-700"
                   : "bg-white/50 border-gray-200"
@@ -566,7 +559,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                   <div>
                     <label
                       htmlFor="name"
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
                         isDark ? "text-gray-200" : "text-gray-700"
                       }`}
                     >
@@ -579,7 +572,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 ${
+                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
                           isDark
                             ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
                             : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
@@ -595,9 +588,9 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     {errors.name && (
                       <p
                         id="name-error"
-                        className="mt-1 text-sm text-red-500 flex items-center"
+                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
                       >
-                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         {errors.name}
                       </p>
                     )}
@@ -607,7 +600,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                   <div>
                     <label
                       htmlFor="email"
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
                         isDark ? "text-gray-200" : "text-gray-700"
                       }`}
                     >
@@ -620,7 +613,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 ${
+                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
                           isDark
                             ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
                             : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
@@ -636,9 +629,9 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     {errors.email && (
                       <p
                         id="email-error"
-                        className="mt-1 text-sm text-red-500 flex items-center"
+                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
                       >
-                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         {errors.email}
                       </p>
                     )}
@@ -648,7 +641,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                   <div>
                     <label
                       htmlFor="subject"
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
                         isDark ? "text-gray-200" : "text-gray-700"
                       }`}
                     >
@@ -661,7 +654,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-xl border transition-all duration-300 ${
+                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
                           isDark
                             ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
                             : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
@@ -677,9 +670,9 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     {errors.subject && (
                       <p
                         id="subject-error"
-                        className="mt-1 text-sm text-red-500 flex items-center"
+                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
                       >
-                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         {errors.subject}
                       </p>
                     )}
@@ -689,7 +682,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                   <div>
                     <label
                       htmlFor="message"
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
                         isDark ? "text-gray-200" : "text-gray-700"
                       }`}
                     >
@@ -701,8 +694,8 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
-                        rows={6}
-                        className={`w-full py-3 rounded-xl border transition-all duration-300 resize-none px-4 pr-4 ${
+                        rows={5}
+                        className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl border transition-all duration-300 resize-none px-3 sm:px-4 text-sm sm:text-base ${
                           isDark
                             ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
                             : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
@@ -718,9 +711,9 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     {errors.message && (
                       <p
                         id="message-error"
-                        className="mt-1 text-sm text-red-500 flex items-center"
+                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
                       >
-                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                         {errors.message}
                       </p>
                     )}
@@ -732,24 +725,24 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`w-full py-4 px-6 rounded-xl font-semibold text-white ${isSuccess ? "bg-gradient-to-r from-green-500 to-emerald-600" : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600"} transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl`}
+                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base text-white ${isSuccess ? "bg-gradient-to-r from-green-500 to-emerald-600" : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600"} transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-md sm:shadow-lg hover:shadow-xl`}
                     aria-label={
                       isSubmitting ? "Sending message..." : isSuccess ? "Message sent successfully" : "Send message"
                     }
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         <span>Sending...</span>
                       </>
                     ) : isSuccess ? (
                       <>
-                        <CheckCircle className="w-5 h-5" />
+                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>Message Sent!</span>
                       </>
                     ) : (
                       <>
-                        <Send className="w-5 h-5" />
+                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>Send Message</span>
                       </>
                     )}

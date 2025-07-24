@@ -400,28 +400,29 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
               transition={{ duration: 0.6 }}
             />
 
-            <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 relative z-10">
+            <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8 relative z-10">
               <motion.div
                 whileHover={{
                   rotate: 360,
                   scale: 1.1,
                 }}
+                whileTap={{ scale: 0.95 }}
                 transition={{ duration: 1 }}
-                className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shadow-2xl"
+                className="p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl md:rounded-3xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 shadow-lg sm:shadow-xl md:shadow-2xl"
               >
-                <Award className="text-white sm:w-12 sm:h-12" size={36} />
+                <Award className="text-white w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
               </motion.div>
 
               <div className="flex-1 text-center md:text-left">
                 <h4
-                  className={`text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 ${
+                  className={`text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 ${
                     isDark ? "text-white" : "text-gray-900"
                   }`}
                 >
                   Full Stack Web Development with MERN Stack & Generative AI
                 </h4>
                 <p
-                  className={`text-base sm:text-lg mb-4 sm:mb-6 ${
+                  className={`text-sm sm:text-base md:text-lg mb-3 sm:mb-4 md:mb-6 ${
                     isDark ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
@@ -431,15 +432,20 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
                 </p>
                 <motion.div
                   whileHover={{ scale: 1.05 }}
-                  className="inline-block bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-base sm:text-lg font-bold shadow-lg"
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-block bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-base md:text-lg font-bold shadow-md sm:shadow-lg"
                 >
                   <a 
                     href="https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-white hover:text-white/90 transition-colors"
+                    className="text-white hover:text-white/90 transition-colors flex items-center justify-center"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open('https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/', '_blank');
+                    }}
                   >
-                    Udemy Certified
+                    <span>Udemy Certified</span>
                   </a>
                 </motion.div>
               </div>
