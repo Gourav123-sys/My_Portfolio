@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
@@ -16,6 +16,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import emailjs from "@emailjs/browser";
 
 interface ContactProps {
   isDark: boolean;
@@ -55,6 +56,8 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  // No need for EmailJS initialization with @emailjs/browser package
 
   const contactInfo = [
     {
@@ -204,45 +207,82 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
     setIsSubmitting(true);
 
     try {
-      // EmailJS integration (you'll need to add EmailJS to your project)
-      // For now, we'll simulate the email sending
+      // Get EmailJS credentials from environment variables
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_USER_ID; // Same env var, different usage
+      
+      // Check if all required credentials are available
+      if (!serviceId || !templateId || !publicKey) {
+        console.error('EmailJS credentials not found in environment variables');
+        toast.error(
+          "Email service is not configured. Please contact me directly through the provided email address."
+        );
+        throw new Error('Email service configuration is missing');
+      }
+      
+      // Show sending toast
+      const sendingToast = toast.loading("Sending your message...");
+      
+      try {
+        // Prepare form data for EmailJS
+        // This ensures the form data is properly mapped to template variables
+        const formElement = formRef.current;
+        if (!formElement) {
+          throw new Error('Form reference is not available');
+        }
 
-      // You can integrate with EmailJS like this:
-      // await emailjs.send(
-      //   'YOUR_SERVICE_ID',
-      //   'YOUR_TEMPLATE_ID',
-      //   {
-      //     from_name: formData.name,
-      //     from_email: formData.email,
-      //     subject: formData.subject,
-      //     message: formData.message,
-      //   },
-      //   'YOUR_USER_ID'
-      // );
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Success handling
-      setIsSuccess(true);
-      toast.success("Message sent successfully! I'll get back to you soon.");
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      });
-      setErrors({});
-
-      // Reset success state after 3 seconds
-      setTimeout(() => setIsSuccess(false), 3000);
+        // Set form field names to match template variables
+        const nameInput = formElement.querySelector('#name') as HTMLInputElement;
+        const emailInput = formElement.querySelector('#email') as HTMLInputElement;
+        const subjectInput = formElement.querySelector('#subject') as HTMLInputElement;
+        const messageInput = formElement.querySelector('#message') as HTMLTextAreaElement;
+        
+        if (nameInput) nameInput.name = 'from_name';
+        if (emailInput) emailInput.name = 'from_email';
+        if (subjectInput) subjectInput.name = 'subject';
+        if (messageInput) messageInput.name = 'message';
+        
+        // Send email using EmailJS with the newer API pattern
+        const response = await emailjs.sendForm(
+          serviceId,
+          templateId,
+          formElement,
+          { publicKey: publicKey }
+        );
+        
+        // Log success for debugging
+        console.log('Email successfully sent!', response);
+        
+        // Update sending toast to success
+        toast.success("Message sent successfully! I'll get back to you soon.", {
+          id: sendingToast,
+        });
+        
+        // Success handling
+        setIsSuccess(true);
+        
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+        setErrors({});
+        
+        // Reset success state after 3 seconds
+        setTimeout(() => setIsSuccess(false), 3000);
+      } catch (emailError) {
+        // Update sending toast to error
+        toast.error(
+          "Failed to send message. Please try again or contact me directly.",
+          { id: sendingToast }
+        );
+        throw emailError; // Re-throw to be caught by outer catch
+      }
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error(
-        "Failed to send message. Please try again or contact me directly."
-      );
     } finally {
       setIsSubmitting(false);
     }
@@ -504,11 +544,23 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                   </p>
                 </motion.div>
               ) : (
-                <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-4 sm:space-y-6"
-                >
+                {/* Developer Note - Remove this in production after setting up EmailJS */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
+              >
+                <p className="text-sm">
+                  <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
+                </p>
+              </motion.div>
+              
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                className="space-y-4 sm:space-y-6"
+              >
                   {/* Name Field */}
                   <div>
                     <label
@@ -536,6 +588,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           errors.name ? "name-error" : undefined
                         }
                         aria-invalid={!!errors.name}
+                        disabled={isSubmitting}
                       />
                     </div>
                     {errors.name && (
@@ -576,6 +629,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           errors.email ? "email-error" : undefined
                         }
                         aria-invalid={!!errors.email}
+                        disabled={isSubmitting}
                       />
                     </div>
                     {errors.email && (
@@ -616,6 +670,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           errors.subject ? "subject-error" : undefined
                         }
                         aria-invalid={!!errors.subject}
+                        disabled={isSubmitting}
                       />
                     </div>
                     {errors.subject && (
@@ -656,6 +711,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           errors.message ? "message-error" : undefined
                         }
                         aria-invalid={!!errors.message}
+                        disabled={isSubmitting}
                       />
                     </div>
                     {errors.message && (
@@ -675,15 +731,20 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`w-full py-4 px-6 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl`}
+                    className={`w-full py-4 px-6 rounded-xl font-semibold text-white ${isSuccess ? "bg-gradient-to-r from-green-500 to-emerald-600" : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600"} transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl`}
                     aria-label={
-                      isSubmitting ? "Sending message..." : "Send message"
+                      isSubmitting ? "Sending message..." : isSuccess ? "Message sent successfully" : "Send message"
                     }
                   >
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         <span>Sending...</span>
+                      </>
+                    ) : isSuccess ? (
+                      <>
+                        <CheckCircle className="w-5 h-5" />
+                        <span>Message Sent!</span>
                       </>
                     ) : (
                       <>
