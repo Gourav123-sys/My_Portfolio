@@ -459,7 +459,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           >
                             <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                           </button>
-                        )}
+                       )}
                       </div>
                     </div>
                   </div>
@@ -524,43 +524,43 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
               </h3>
 
               {isSuccess ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h4
-                    className={`text-xl font-semibold mb-2 ${
-                      isDark ? "text-white" : "text-gray-900"
-                    }`}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-12"
                   >
-                    Message Sent!
-                  </h4>
-                  <p
-                    className={`${isDark ? "text-gray-300" : "text-gray-600"}`}
+                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    <h4
+                      className={`text-xl font-semibold mb-2 ${
+                        isDark ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      Message Sent!
+                    </h4>
+                    <p
+                      className={`${isDark ? "text-gray-300" : "text-gray-600"}`}
+                    >
+                      Thank you for reaching out. I'll get back to you soon!
+                    </p>
+                  </motion.div>
+                ) : (
+                  /* Developer Note - Remove this in production after setting up EmailJS */
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                    className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
                   >
-                    Thank you for reaching out. I'll get back to you soon!
-                  </p>
-                </motion.div>
-              ) : (
-                /* Developer Note - Remove this in production after setting up EmailJS */
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
-                >
-                  <p className="text-sm">
-                    <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
-                  </p>
-                </motion.div>
-              )
-              
-              <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                className="space-y-4 sm:space-y-6"
+                    <p className="text-sm">
+                      <strong>Note:</strong> To make this contact form functional, you need to set up EmailJS. See the README.md file for instructions.
+                    </p>
+                  </motion.div>
+                )}
+                
+                <form
+                  ref={formRef}
+                  onSubmit={handleSubmit}
+                  className="space-y-4 sm:space-y-6"
               >
                   {/* Name Field */}
                   <div>
@@ -755,7 +755,6 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                     )}
                   </motion.button>
                 </form>
-              )}
             </div>
           </motion.div>
         </div>
