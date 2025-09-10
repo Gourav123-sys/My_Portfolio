@@ -51,6 +51,7 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
         { name: "Node.js", level: 90, color: "from-green-400 to-green-600" },
         { name: "Express.js", level: 88, color: "from-gray-400 to-gray-600" },
         { name: "MongoDB", level: 85, color: "from-green-500 to-emerald-600" },
+        { name: "SQL", level: 87, color: "from-blue-500 to-indigo-600" },
         { name: "REST APIs", level: 92, color: "from-blue-400 to-indigo-600" },
         { name: "Socket.IO", level: 80, color: "from-purple-400 to-pink-500" },
       ],
