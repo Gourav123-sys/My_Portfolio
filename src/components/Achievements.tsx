@@ -86,14 +86,14 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
   const stats = [
     {
       label: "LeetCode",
-      value: "280+",
+      value: "340+",
       description: "Problems Solved",
       icon: Code,
       color: "from-green-400 to-emerald-600",
     },
     {
       label: "CodeChef",
-      value: "1593",
+      value: "1602",
       description: "Current Rating",
       icon: Trophy,
       color: "from-yellow-400 to-orange-500",

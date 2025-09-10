@@ -74,11 +74,11 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
         "Developed 10+ full-stack, frontend, and backend projects using React, Node.js, Express, and MongoDB. Passionate about building real-world, scalable solutions and learning by doing.",
     },
     {
-      number: "1593",
+      number: "1602",
       label: "CodeChef Rating",
       icon: Award,
       description:
-        "Achieved a peak CodeChef rating of 1593. Consistent performer in national-level coding contests and a dedicated competitive programmer.",
+        "Achieved a peak CodeChef rating of 1602. Consistent performer in national-level coding contests and a dedicated competitive programmer.",
     },
     {
       number: "2+",
@@ -339,7 +339,7 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
                       Nov 2022 – May 2026
                     </p>
                     <div className="px-3 sm:px-4 py-1 sm:py-2 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-sm sm:text-base self-start sm:self-auto">
-                      CGPA: 7.88/10
+                      CGPA: 7.75/10
                     </div>
                   </div>
                 </div>

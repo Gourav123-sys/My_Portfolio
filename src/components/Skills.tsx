@@ -102,7 +102,7 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
   const competitiveProgramming = [
     {
       platform: "CodeChef",
-      rating: "1593",
+      rating: "1602",
       color: "from-yellow-500 to-orange-500",
       icon: Trophy,
       rank: "3⭐",
@@ -377,11 +377,11 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
                   }`}
                 >
                   {platform.platform === "CodeChef"
-                    ? "2-star coder, 1593 rating, regular contest participant."
+                    ? "3-star coder, 1602 rating, regular contest participant."
                     : platform.platform === "Codeforces"
                     ? "Newbie, 1147 rating, active in global rounds."
                     : platform.platform === "LeetCode"
-                    ? "280+ problems solved across various DSA topics."
+                    ? "340+ problems solved across various DSA topics."
                     : platform.platform === "HackerRank"
                     ? "5-star in Problem Solving and Language Proficiency."
                     : platform.platform === "GeeksforGeeks"
