@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Code,
@@ -21,9 +21,6 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
     triggerOnce: true,
     threshold: 0.2,
   });
-
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
 
   const highlights = [
     {
@@ -101,32 +98,8 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
     >
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 24,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute top-1/4 right-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1.1, 1, 1.1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute bottom-1/4 left-1/4 w-24 h-24 sm:w-48 sm:h-48 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 rounded-full blur-3xl"
-        />
+        <div className="absolute top-1/4 right-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-1/4 w-24 h-24 sm:w-48 sm:h-48 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -138,17 +111,16 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
           style={{ willChange: "opacity, transform" }}
           className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <motion.h2
+          <h2
             className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 ${
               isDark ? "text-white" : "text-gray-900"
             }`}
-            style={{ scale }}
           >
             About{" "}
             <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
               Me
             </span>
-          </motion.h2>
+          </h2>
           <motion.div
             className="w-24 sm:w-32 h-1 sm:h-2 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 mx-auto rounded-full"
             initial={{ width: 0 }}
@@ -182,13 +154,9 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
                   : "bg-white/80 backdrop-blur-xl border border-blue-200/50"
               } shadow-2xl group cursor-pointer`}
             >
-              <motion.div
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
-                className="inline-flex p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 mb-3 sm:mb-4 group-hover:shadow-lg group-hover:shadow-purple-500/25"
-              >
+              <div className="inline-flex p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 mb-3 sm:mb-4 group-hover:shadow-lg group-hover:shadow-purple-500/25">
                 <stat.icon className="text-white sm:w-8 sm:h-8" size={24} />
-              </motion.div>
+              </div>
               <motion.div
                 className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-1 sm:mb-2"
                 initial={{ opacity: 0 }}
@@ -312,13 +280,9 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
               } shadow-2xl group cursor-pointer`}
             >
               <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4">
-                <motion.div
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                  className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 group-hover:shadow-lg group-hover:shadow-purple-500/25 self-start"
-                >
+                <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-gradient-to-r from-purple-600 to-blue-600 group-hover:shadow-lg group-hover:shadow-purple-500/25 self-start">
                   <Award className="text-white sm:w-6 sm:h-6" size={20} />
-                </motion.div>
+                </div>
                 <div className="flex-1">
                   <h3
                     className={`text-lg sm:text-xl md:text-2xl font-bold mb-2 ${
@@ -381,16 +345,14 @@ const About: React.FC<AboutProps> = ({ isDark }) => {
                   transition={{ duration: 0.1 }}
                 />
                 <div className="flex flex-col sm:flex-row sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-6 relative z-10">
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.15 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  <div
                     className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r ${highlight.color} group-hover:shadow-lg group-hover:shadow-purple-500/25 transition-shadow duration-100 self-start`}
                   >
                     <highlight.icon
                       className="text-white sm:w-8 sm:h-8"
                       size={24}
                     />
-                  </motion.div>
+                  </div>
                   <div className="flex-1">
                     <h4
                       className={`text-lg sm:text-xl md:text-2xl font-bold mb-2 sm:mb-3 ${

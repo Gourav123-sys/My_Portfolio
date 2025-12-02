@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Trophy,
@@ -22,9 +22,6 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
     triggerOnce: true,
     threshold: 0.2,
   });
-
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
 
   const achievements = [
     {
@@ -125,32 +122,8 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
     >
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 36,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-to-r from-yellow-500/5 via-orange-500/5 to-red-500/5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1.3, 1, 1.3],
-          }}
-          transition={{
-            duration: 32,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-cyan-500/5 rounded-full blur-3xl"
-        />
+        <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-to-r from-yellow-500/5 via-orange-500/5 to-red-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-r from-purple-500/5 via-blue-500/5 to-cyan-500/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
@@ -162,17 +135,16 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
           style={{ willChange: "opacity, transform" }}
           className="text-center mb-12 sm:mb-16 md:mb-20"
         >
-          <motion.h2
+          <h2
             className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 ${
               isDark ? "text-white" : "text-gray-900"
             }`}
-            style={{ scale }}
           >
             Achievements &{" "}
             <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
               Recognition
             </span>
-          </motion.h2>
+          </h2>
           <motion.div
             className="w-24 sm:w-32 h-1 sm:h-2 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 mx-auto rounded-full"
             initial={{ width: 0 }}
@@ -191,13 +163,11 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.5, rotateY: 180 }}
-              animate={inView ? { opacity: 1, scale: 1, rotateY: 0 } : {}}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{
-                duration: 0.8,
-                delay: 0.3 + index * 0.1,
-                type: "spring",
-                stiffness: 100,
+                duration: 0.5,
+                delay: 0.2 + index * 0.1,
               }}
               whileHover={{
                 scale: 1.05,
@@ -435,14 +405,17 @@ const Achievements: React.FC<AchievementsProps> = ({ isDark }) => {
                   whileTap={{ scale: 0.95 }}
                   className="inline-block bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl md:rounded-2xl text-sm sm:text-base md:text-lg font-bold shadow-md sm:shadow-lg"
                 >
-                  <a 
-                    href="https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/" 
-                    target="_blank" 
+                  <a
+                    href="https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-white hover:text-white/90 transition-colors flex items-center justify-center"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open('https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/', '_blank');
+                      window.open(
+                        "https://www.udemy.com/certificate/UC-a6f2d4e9-2811-4fa4-9345-a61b9847d1f7/",
+                        "_blank"
+                      );
                     }}
                   >
                     <span>Udemy Certified</span>

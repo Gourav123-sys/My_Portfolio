@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   ExternalLink,
@@ -34,8 +29,6 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
   });
 
   const [currentProject, setCurrentProject] = useState(0);
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
 
   const projects = [
     {
@@ -305,17 +298,16 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
           style={{ willChange: "opacity, transform" }}
           className="text-center mb-20"
         >
-          <motion.h2
+          <h2
             className={`text-6xl md:text-7xl font-black mb-6 ${
               isDark ? "text-white" : "text-gray-900"
             }`}
-            style={{ scale }}
           >
             Featured{" "}
             <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
               Projects
             </span>
-          </motion.h2>
+          </h2>
           <motion.div
             className="w-32 h-2 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 mx-auto rounded-full"
             initial={{ width: 0 }}
@@ -348,25 +340,19 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentProject}
-                initial={{ opacity: 0, x: 300, rotateY: 45 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                exit={{ opacity: 0, x: -300, rotateY: -45 }}
-                transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
                 className="grid lg:grid-cols-2 gap-16 items-center"
               >
                 {/* Project Image */}
-                <motion.div
-                  className="relative overflow-hidden rounded-3xl group"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.6 }}
-                >
+                <div className="relative overflow-hidden rounded-3xl group">
                   <div className="relative">
-                    <motion.img
+                    <img
                       src={projects[currentProject].image}
                       alt={projects[currentProject].title}
-                      className="w-full h-96 object-cover rounded-3xl"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.8 }}
+                      className="w-full h-96 object-cover rounded-3xl transition-transform duration-300 group-hover:scale-105"
                     />
 
                     {/* Overlay */}
@@ -377,26 +363,18 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                     />
 
                     {/* Floating Icon */}
-                    <motion.div
+                    <div
                       className={`absolute top-6 left-6 p-4 rounded-2xl bg-gradient-to-r ${projects[currentProject].color} shadow-2xl`}
-                      whileHover={{
-                        rotate: 360,
-                        scale: 1.1,
-                      }}
-                      transition={{ duration: 0.8 }}
                     >
                       {React.createElement(projects[currentProject].icon, {
                         className: "text-white",
                         size: 32,
                       })}
-                    </motion.div>
+                    </div>
 
                     {/* Live Demo Button Overlay */}
-                    <motion.div
-                      className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500"
-                      initial={{ scale: 0 }}
-                      whileHover={{ scale: 1 }}
-                      transition={{ duration: 0.3 }}
+                    <div
+                      className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300"
                     >
                       {projects[currentProject].live !== "#" && (
                         <motion.a

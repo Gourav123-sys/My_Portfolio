@@ -6,10 +6,6 @@ const phoneVariants = {
   animate: {
     opacity: 1,
     scale: 1,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
   },
 };
 
@@ -18,24 +14,13 @@ const textVariants = {
   animate: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      delay: 0.2,
-      ease: "easeOut",
-    },
   },
 };
 
 const dotVariants = {
-  animate: (i: number) => ({
+  animate: {
     opacity: [0.5, 1, 0.5],
-    transition: {
-      duration: 1,
-      repeat: Infinity,
-      delay: i * 0.2,
-      ease: "easeInOut",
-    },
-  }),
+  },
 };
 
 const StarterAnimation: React.FC = () => {
@@ -46,6 +31,7 @@ const StarterAnimation: React.FC = () => {
         variants={phoneVariants}
         initial="initial"
         animate="animate"
+        transition={{ duration: 0.5, ease: "easeOut" }}
         style={{ width: 200, height: 400 }}
       >
         {/* Phone body */}
@@ -62,6 +48,7 @@ const StarterAnimation: React.FC = () => {
             variants={textVariants}
             initial="initial"
             animate="animate"
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
             <span className="block text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-400 via-blue-400 to-cyan-400 bg-clip-text text-transparent">
               Gourav Mondal
@@ -87,9 +74,14 @@ const StarterAnimation: React.FC = () => {
                       ? "bg-white/80"
                       : "bg-white/60"
                   }`}
-                  custom={i}
                   variants={dotVariants}
                   animate="animate"
+                  transition={{
+                    duration: 1,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut",
+                  }}
                 />
               ))}
             </div>

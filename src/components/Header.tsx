@@ -14,30 +14,18 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
   const pendingScrollTarget = useRef<string | null>(null);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-
-      // Update active section based on scroll position
-      const sections = [
-        "home",
-        "about",
-        "skills",
-        "projects",
-        "achievements",
-        "contact",
-      ];
-      const current = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      if (current) setActiveSection(current);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -73,10 +61,8 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
             ? isDark
               ? "bg-gray-900/95 backdrop-blur-xl border-b border-purple-500/20 shadow-2xl shadow-purple-500/10"
@@ -91,12 +77,9 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-3"
             >
-              <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
                   <Code2 className="text-white" size={24} />
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-xl blur opacity-30 animate-pulse"></div>
-              </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
                   Gourav Mondal
@@ -106,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                     isDark ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   Full Stack Developer
                 </span>
               </div>
@@ -148,9 +131,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                 </a>
               ))}
 
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 180 }}
-                whileTap={{ scale: 0.9 }}
+              <button
                 onClick={toggleTheme}
                 className={`ml-4 p-3 rounded-xl ${
                   isDark
@@ -230,19 +211,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
             )}
           </AnimatePresence>
         </nav>
-      </motion.header>
-
-      {/* Scroll Progress Indicator */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 z-50 origin-left shadow-lg"
-        style={{
-          scaleX: scrolled ? 1 : 0,
-          willChange: "transform",
-        }}
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: scrolled ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-      />
+      </header>
     </>
   );
 };

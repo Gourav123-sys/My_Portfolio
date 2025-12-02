@@ -89,30 +89,8 @@ const Footer: React.FC<FooterProps> = ({ isDark }) => {
 
       {/* Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 60,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1.1, 1, 1.1],
-          }}
-          transition={{
-            duration: 55,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute bottom-1/4 right-1/4 w-24 h-24 sm:w-48 sm:h-48 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl"
-        />
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-64 sm:h-64 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 sm:w-48 sm:h-48 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl" />
       </div>
 
       <div className="container mx-auto py-8 sm:py-12 relative z-10">

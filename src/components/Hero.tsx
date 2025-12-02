@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useAnimation } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Github,
   Linkedin,
@@ -12,12 +12,7 @@ import {
   Zap,
   Target,
   Trophy,
-  ChefHat,
-  Brain,
-  Star,
 } from "lucide-react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -136,8 +131,6 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
     { icon: Target, delay: 1.5, x: -150, y: -120 },
     { icon: Trophy, delay: 2, x: 120, y: -150 },
   ];
-
-  const allLinks = [...socialLinks];
 
   return (
     <section
