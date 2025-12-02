@@ -226,10 +226,7 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
       image:
         "https://images.pexels.com/photos/267371/pexels-photo-267371.jpeg?auto=compress&cs=tinysrgb&w=800",
       technologies: ["c++"],
-      features: [
-        "Contact CRUD operations",
-        "Contact categorization",
-      ],
+      features: ["Contact CRUD operations", "Contact categorization"],
       github: "https://github.com/Gourav123-sys/Contact-Management-System",
       live: "#",
       icon: Phone,
@@ -356,10 +353,8 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                     />
 
                     {/* Overlay */}
-                    <motion.div
+                    <div
                       className={`absolute inset-0 bg-gradient-to-br ${projects[currentProject].bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`}
-                      initial={{ opacity: 0 }}
-                      whileHover={{ opacity: 1 }}
                     />
 
                     {/* Floating Icon */}
@@ -373,9 +368,7 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                     </div>
 
                     {/* Live Demo Button Overlay */}
-                    <div
-                      className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300"
-                    >
+                    <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                       {projects[currentProject].live !== "#" && (
                         <motion.a
                           href={projects[currentProject].live}
@@ -389,9 +382,9 @@ const Projects: React.FC<ProjectsProps> = ({ isDark }) => {
                           View Live Demo
                         </motion.a>
                       )}
-                    </motion.div>
+                    </div>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Project Content */}
                 <motion.div
