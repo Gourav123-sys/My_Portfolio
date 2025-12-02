@@ -258,30 +258,6 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
                   GM
                 </motion.span>
               </div>
-
-              {/* Floating Particles */}
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"
-                  animate={{
-                    x: [0, Math.cos((i * 60 * Math.PI) / 180) * 40],
-                    y: [0, Math.sin((i * 60 * Math.PI) / 180) * 40],
-                    opacity: [0, 1, 0],
-                    scale: [0, 1, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    delay: i * 0.5,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    left: "50%",
-                    top: "50%",
-                  }}
-                />
-              ))}
             </div>
           </motion.div>
 
