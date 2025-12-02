@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  Suspense,
-  lazy,
-  ErrorBoundary,
-} from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import { Toaster } from "react-hot-toast";
 import Skills from "./components/Skills";
 
@@ -19,19 +12,30 @@ const Contact = lazy(() => import("./components/Contact"));
 const Footer = lazy(() => import("./components/Footer"));
 
 // Error Boundary Component
-class ErrorBoundaryClass extends React.Component {
-  constructor(props) {
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundaryClass extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error caught by boundary:", error, errorInfo);
-    // Send to error tracking service
   }
 
   render() {
@@ -73,8 +77,6 @@ const ComponentLoader = ({ componentName }: { componentName: string }) => (
 
 function App() {
   const [isDark, setIsDark] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     // Check for saved theme preference or default to system preference
@@ -87,38 +89,15 @@ function App() {
 
     // Listen for system theme changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleThemeChange = (e) => {
+    const handleThemeChange = (e: MediaQueryListEvent) => {
       if (!localStorage.getItem("theme")) {
         setIsDark(e.matches);
       }
     };
     mediaQuery.addEventListener("change", handleThemeChange);
 
-    // Online/offline status
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    // Performance monitoring
-    if ("performance" in window) {
-      const observer = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === "navigation") {
-            console.log(
-              "Page load time:",
-              entry.loadEventEnd - entry.loadEventStart
-            );
-          }
-        }
-      });
-      observer.observe({ entryTypes: ["navigation"] });
-    }
-
     return () => {
       mediaQuery.removeEventListener("change", handleThemeChange);
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
@@ -129,38 +108,24 @@ function App() {
     // Apply theme to document
     if (isDark) {
       document.documentElement.classList.add("dark");
-      document.documentElement.setAttribute("data-theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
-      document.documentElement.setAttribute("data-theme", "light");
     }
   }, [isDark]);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
-    setHasInteracted(true);
   };
-
-  // Loading Screen Component (no longer used)
 
   return (
     <ErrorBoundaryClass>
       <div
-        className={`min-h-screen transition-all duration-500 ${
+        className={`min-h-screen ${
           isDark ? "bg-gray-900 text-white" : "bg-white text-gray-900"
         }`}
         id="main-content"
         role="main"
-        style={{}}
       >
-        {/* Offline indicator */}
-        {!isOnline && (
-          <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-center py-2 z-50">
-            You are currently offline. Some features may not work properly.
-          </div>
-        )}
-
-        {/* Toast notifications */}
         <Toaster
           position="top-right"
           toastOptions={{
@@ -173,7 +138,6 @@ function App() {
           }}
         />
 
-        {/* Main Content - removed AnimatePresence and motion.div fade-in */}
         <Suspense fallback={<ComponentLoader componentName="Header" />}>
           <Header isDark={isDark} toggleTheme={toggleTheme} />
         </Suspense>
@@ -183,7 +147,6 @@ function App() {
         <Suspense fallback={<ComponentLoader componentName="About" />}>
           <About isDark={isDark} />
         </Suspense>
-        {/* Use Skills directly, not in Suspense */}
         <Skills isDark={isDark} />
         <Suspense fallback={<ComponentLoader componentName="Projects" />}>
           <Projects isDark={isDark} />
