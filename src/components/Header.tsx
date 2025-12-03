@@ -29,13 +29,12 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll after menu closes
   useEffect(() => {
     if (!isMenuOpen && pendingScrollTarget.current) {
       setTimeout(() => {
         scrollToSection(pendingScrollTarget.current!);
         pendingScrollTarget.current = null;
-      }, 10); // minimal delay to ensure DOM is stable
+      }, 10);
     }
   }, [isMenuOpen]);
 
@@ -52,7 +51,6 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
-      // Update the URL hash for better browser support
       if (window.location.hash !== href) {
         window.history.replaceState(null, "", href);
       }
@@ -77,9 +75,9 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
               whileHover={{ scale: 1.05 }}
               className="flex items-center space-x-3"
             >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                  <Code2 className="text-white" size={24} />
-                </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                <Code2 className="text-white" size={24} />
+              </div>
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
                   Gourav Mondal
@@ -131,8 +129,11 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                 </a>
               ))}
 
-              <button
+              {/* FIXED BUTTON */}
+              <motion.button
                 onClick={toggleTheme}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 className={`ml-4 p-3 rounded-xl ${
                   isDark
                     ? "bg-gradient-to-br from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/25"
@@ -157,6 +158,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
               >
                 {isDark ? <Sun size={18} /> : <Moon size={18} />}
               </motion.button>
+
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -184,7 +186,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                     : "bg-white/90 backdrop-blur-xl border border-blue-200/50"
                 } shadow-2xl`}
               >
-                {navItems.map((item, index) => (
+                {navItems.map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
