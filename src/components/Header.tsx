@@ -19,6 +19,24 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           setScrolled(window.scrollY > 50);
+          const offset = 120;
+          let current = "home";
+          const sections = [
+            "#home",
+            "#about",
+            "#skills",
+            "#projects",
+            "#achievements",
+            "#contact",
+          ];
+          for (const href of sections) {
+            const el = document.querySelector(href);
+            if (el) {
+              const top = (el as HTMLElement).getBoundingClientRect().top;
+              if (top <= offset) current = href.slice(1);
+            }
+          }
+          setActiveSection(current);
           ticking = false;
         });
         ticking = true;
@@ -27,6 +45,11 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) setActiveSection(hash.slice(1));
   }, []);
 
   useEffect(() => {
@@ -101,6 +124,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                   href={item.href}
                   onClick={(e) => {
                     e.preventDefault();
+                    setActiveSection(item.href.slice(1));
                     scrollToSection(item.href);
                   }}
                   className={`relative px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
@@ -193,6 +217,7 @@ const Header: React.FC<HeaderProps> = ({ isDark, toggleTheme }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       pendingScrollTarget.current = item.href;
+                      setActiveSection(item.href.slice(1));
                       setIsMenuOpen(false);
                     }}
                     className={`block w-full text-left px-4 py-3 rounded-xl mb-2 font-medium transition-all duration-300 ${
