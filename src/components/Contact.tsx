@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import {
   Mail,
@@ -9,8 +9,6 @@ import {
   Github,
   Linkedin,
   ExternalLink,
-  MessageCircle,
-  User,
   FileText,
   CheckCircle,
   AlertCircle,
@@ -41,9 +39,6 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
     triggerOnce: true,
     threshold: 0.2,
   });
-
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -211,49 +206,49 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
       const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
       const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
       const publicKey = import.meta.env.VITE_EMAILJS_USER_ID;
-      
+
       // Check if all required credentials are available
       if (!serviceId || !templateId || !publicKey) {
-        console.error('EmailJS credentials not found in environment variables');
+        console.error("EmailJS credentials not found in environment variables");
         toast.error(
           "Email service is not configured. Please contact me directly through the provided email address."
         );
-        throw new Error('Email service configuration is missing');
+        throw new Error("Email service configuration is missing");
       }
-      
+
       // Show sending toast
       const sendingToast = toast.loading("Sending your message...");
-      
+
       try {
         // Initialize EmailJS with your public key
         emailjs.init(publicKey);
-        
+
         // Prepare template parameters
         const templateParams = {
           from_name: formData.name,
           from_email: formData.email,
           subject: formData.subject,
-          message: formData.message
+          message: formData.message,
         };
-        
+
         // Send email using EmailJS
         const response = await emailjs.send(
           serviceId,
           templateId,
           templateParams
         );
-        
+
         // Log success for debugging
-        console.log('Email successfully sent!', response);
-        
+        console.log("Email successfully sent!", response);
+
         // Update sending toast to success
         toast.success("Message sent successfully! I'll get back to you soon.", {
           id: sendingToast,
         });
-        
+
         // Success handling
         setIsSuccess(true);
-        
+
         // Reset form
         setFormData({
           name: "",
@@ -262,7 +257,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
           message: "",
         });
         setErrors({});
-        
+
         // Reset success state after 3 seconds
         setTimeout(() => setIsSuccess(false), 3000);
       } catch (emailError) {
@@ -299,36 +294,6 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
           : "bg-gradient-to-br from-gray-50 via-white to-gray-50"
       }`}
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 32,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute top-1/4 right-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            scale: [1.2, 1, 1.2],
-          }}
-          transition={{
-            duration: 28,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute bottom-1/4 left-1/4 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl"
-        />
-      </div>
-
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <motion.div
           ref={ref}
@@ -342,7 +307,6 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
             className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 ${
               isDark ? "text-white" : "text-gray-900"
             }`}
-            style={{ scale }}
           >
             Get In{" "}
             <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent">
@@ -451,7 +415,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                           >
                             <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                           </button>
-                       )}
+                        )}
                       </div>
                     </div>
                   </div>
@@ -481,7 +445,7 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
                       src={link.icon}
                       alt={link.name}
                       className="mb-1 sm:mb-2 flex-shrink-0"
-                      style={{ width: 20, height: 20, maxWidth: '100%' }}
+                      style={{ width: 20, height: 20, maxWidth: "100%" }}
                     />
                   ) : (
                     <link.icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mb-1 flex-shrink-0" />
@@ -517,237 +481,249 @@ const Contact: React.FC<ContactProps> = ({ isDark }) => {
               </h3>
 
               {isSuccess ? (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-12"
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center py-12"
+                >
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h4
+                    className={`text-xl font-semibold mb-2 ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
                   >
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h4
-                      className={`text-xl font-semibold mb-2 ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      Message Sent!
-                    </h4>
-                    <p
-                      className={`${isDark ? "text-gray-300" : "text-gray-600"}`}
-                    >
-                      Thank you for reaching out. I'll get back to you soon!
-                    </p>
-                  </motion.div>
-                ) : (
-                  /* Developer Note - Remove this in production after setting up EmailJS */
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className={`p-4 mb-6 rounded-lg border ${isDark ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200" : "bg-yellow-50 border-yellow-200 text-yellow-800"}`}
+                    Message Sent!
+                  </h4>
+                  <p
+                    className={`${isDark ? "text-gray-300" : "text-gray-600"}`}
                   >
-                    <p className="text-sm">
-                      <strong>Note:</strong> This contact form is currently set up for demonstration purposes. Feel free to reach out to me directly via email.
-                    </p>
-                  </motion.div>
-                )}
-                
-                <form
-                  ref={formRef}
-                  onSubmit={handleSubmit}
-                  className="space-y-4 sm:space-y-6"
+                    Thank you for reaching out. I'll get back to you soon!
+                  </p>
+                </motion.div>
+              ) : (
+                /* Developer Note - Remove this in production after setting up EmailJS */
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className={`p-4 mb-6 rounded-lg border ${
+                    isDark
+                      ? "bg-yellow-900/20 border-yellow-700/50 text-yellow-200"
+                      : "bg-yellow-50 border-yellow-200 text-yellow-800"
+                  }`}
+                >
+                  <p className="text-sm">
+                    <strong>Note:</strong> This contact form is currently set up
+                    for demonstration purposes. Feel free to reach out to me
+                    directly via email.
+                  </p>
+                </motion.div>
+              )}
+
+              <form
+                ref={formRef}
+                onSubmit={handleSubmit}
+                className="space-y-4 sm:space-y-6"
               >
-                  {/* Name Field */}
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
-                        isDark ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Name *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
-                          isDark
-                            ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
-                            : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
-                        } ${errors.name ? "border-red-500" : ""}`}
-                        placeholder="Your full name"
-                        aria-describedby={
-                          errors.name ? "name-error" : undefined
-                        }
-                        aria-invalid={!!errors.name}
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    {errors.name && (
-                      <p
-                        id="name-error"
-                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
-                      >
-                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Email Field */}
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
-                        isDark ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Email *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
-                          isDark
-                            ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
-                            : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
-                        } ${errors.email ? "border-red-500" : ""}`}
-                        placeholder="your.email@example.com"
-                        aria-describedby={
-                          errors.email ? "email-error" : undefined
-                        }
-                        aria-invalid={!!errors.email}
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    {errors.email && (
-                      <p
-                        id="email-error"
-                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
-                      >
-                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Subject Field */}
-                  <div>
-                    <label
-                      htmlFor="subject"
-                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
-                        isDark ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Subject *
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
-                          isDark
-                            ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
-                            : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
-                        } ${errors.subject ? "border-red-500" : ""}`}
-                        placeholder="What's this about?"
-                        aria-describedby={
-                          errors.subject ? "subject-error" : undefined
-                        }
-                        aria-invalid={!!errors.subject}
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    {errors.subject && (
-                      <p
-                        id="subject-error"
-                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
-                      >
-                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        {errors.subject}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Message Field */}
-                  <div>
-                    <label
-                      htmlFor="message"
-                      className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
-                        isDark ? "text-gray-200" : "text-gray-700"
-                      }`}
-                    >
-                      Message *
-                    </label>
-                    <div className="relative">
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        rows={5}
-                        className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl border transition-all duration-300 resize-none px-3 sm:px-4 text-sm sm:text-base ${
-                          isDark
-                            ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
-                            : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
-                        } ${errors.message ? "border-red-500" : ""}`}
-                        placeholder="Tell me about your project or just say hello!"
-                        aria-describedby={
-                          errors.message ? "message-error" : undefined
-                        }
-                        aria-invalid={!!errors.message}
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    {errors.message && (
-                      <p
-                        id="message-error"
-                        className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
-                      >
-                        <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                        {errors.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base text-white ${isSuccess ? "bg-gradient-to-r from-green-500 to-emerald-600" : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600"} transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-md sm:shadow-lg hover:shadow-xl`}
-                    aria-label={
-                      isSubmitting ? "Sending message..." : isSuccess ? "Message sent successfully" : "Send message"
-                    }
+                {/* Name Field */}
+                <div>
+                  <label
+                    htmlFor="name"
+                    className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Sending...</span>
-                      </>
-                    ) : isSuccess ? (
-                      <>
-                        <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Message Sent!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span>Send Message</span>
-                      </>
-                    )}
-                  </motion.button>
-                </form>
+                    Name *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
+                        isDark
+                          ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
+                          : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
+                      } ${errors.name ? "border-red-500" : ""}`}
+                      placeholder="Your full name"
+                      aria-describedby={errors.name ? "name-error" : undefined}
+                      aria-invalid={!!errors.name}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  {errors.name && (
+                    <p
+                      id="name-error"
+                      className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
+                    >
+                      <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {errors.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Email Field */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
+                    Email *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
+                        isDark
+                          ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
+                          : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
+                      } ${errors.email ? "border-red-500" : ""}`}
+                      placeholder="your.email@example.com"
+                      aria-describedby={
+                        errors.email ? "email-error" : undefined
+                      }
+                      aria-invalid={!!errors.email}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p
+                      id="email-error"
+                      className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
+                    >
+                      <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {errors.email}
+                    </p>
+                  )}
+                </div>
+
+                {/* Subject Field */}
+                <div>
+                  <label
+                    htmlFor="subject"
+                    className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
+                    Subject *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="subject"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl border transition-all duration-300 ${
+                        isDark
+                          ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
+                          : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
+                      } ${errors.subject ? "border-red-500" : ""}`}
+                      placeholder="What's this about?"
+                      aria-describedby={
+                        errors.subject ? "subject-error" : undefined
+                      }
+                      aria-invalid={!!errors.subject}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  {errors.subject && (
+                    <p
+                      id="subject-error"
+                      className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
+                    >
+                      <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {errors.subject}
+                    </p>
+                  )}
+                </div>
+
+                {/* Message Field */}
+                <div>
+                  <label
+                    htmlFor="message"
+                    className={`block text-sm font-medium mb-1.5 sm:mb-2 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
+                    Message *
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      rows={5}
+                      className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl border transition-all duration-300 resize-none px-3 sm:px-4 text-sm sm:text-base ${
+                        isDark
+                          ? "bg-gray-700/50 border-gray-600 text-white placeholder-gray-400 focus:border-purple-500"
+                          : "bg-white/50 border-gray-300 text-gray-900 placeholder-gray-500 focus:border-purple-500"
+                      } ${errors.message ? "border-red-500" : ""}`}
+                      placeholder="Tell me about your project or just say hello!"
+                      aria-describedby={
+                        errors.message ? "message-error" : undefined
+                      }
+                      aria-invalid={!!errors.message}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  {errors.message && (
+                    <p
+                      id="message-error"
+                      className="mt-1 text-xs sm:text-sm text-red-500 flex items-center"
+                    >
+                      <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                      {errors.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-sm sm:text-base text-white ${
+                    isSuccess
+                      ? "bg-gradient-to-r from-green-500 to-emerald-600"
+                      : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:from-purple-700 hover:via-blue-700 hover:to-cyan-600"
+                  } transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-md sm:shadow-lg hover:shadow-xl`}
+                  aria-label={
+                    isSubmitting
+                      ? "Sending message..."
+                      : isSuccess
+                      ? "Message sent successfully"
+                      : "Send message"
+                  }
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Sending...</span>
+                    </>
+                  ) : isSuccess ? (
+                    <>
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span>Message Sent!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span>Send Message</span>
+                    </>
+                  )}
+                </motion.button>
+              </form>
             </div>
           </motion.div>
         </div>

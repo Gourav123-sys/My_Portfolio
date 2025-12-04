@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Github,
   Linkedin,
@@ -7,11 +7,6 @@ import {
   Phone,
   Download,
   ExternalLink,
-  Sparkles,
-  Code,
-  Zap,
-  Target,
-  Trophy,
 } from "lucide-react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -25,21 +20,6 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
   const [currentText, setCurrentText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { scrollY } = useScroll();
-
-  // Fix: Store marquee width in state to avoid SSR/hydration issues
-  const [marqueeWidth, setMarqueeWidth] = useState(0);
-  useEffect(() => {
-    // Only run on client
-    setMarqueeWidth(window.innerWidth);
-    const handleResize = () => setMarqueeWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Reduced parallax effect to keep content visible
-  const y = useTransform(scrollY, [0, 500], [0, 50]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0.8]);
 
   const texts = [
     "Full Stack Developer",
@@ -124,14 +104,6 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
     },
   ];
 
-  const floatingElements = [
-    { icon: Code, delay: 0, x: 100, y: 100 },
-    { icon: Zap, delay: 0.5, x: -100, y: 150 },
-    { icon: Sparkles, delay: 1, x: 150, y: -100 },
-    { icon: Target, delay: 1.5, x: -150, y: -120 },
-    { icon: Trophy, delay: 2, x: 120, y: -150 },
-  ];
-
   return (
     <section
       id="home"
@@ -141,69 +113,7 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
           : "bg-gradient-to-br from-gray-50 via-white to-gray-50"
       }`}
     >
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        {/* Gradient Orbs */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-96 sm:h-96 bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-cyan-500/30 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-            opacity: [0.4, 0.7, 0.4],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          style={{ willChange: "transform, opacity" }}
-          className="absolute bottom-1/4 right-1/4 w-40 h-40 sm:w-80 sm:h-80 bg-gradient-to-r from-pink-500/30 via-purple-500/30 to-indigo-500/30 rounded-full blur-3xl"
-        />
-
-        {/* Floating Elements */}
-        {floatingElements.map((element, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-              opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.2, 1],
-              x: [element.x, element.x + 50, element.x],
-              y: [element.y, element.y - 30, element.y],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              delay: element.delay,
-              ease: "easeInOut",
-            }}
-            className={`absolute ${
-              isDark ? "text-purple-400" : "text-blue-500"
-            }`}
-            style={{ left: `50%`, top: `50%` }}
-          >
-            <element.icon size={20} className="sm:w-6 sm:h-6" />
-          </motion.div>
-        ))}
-      </div>
-
-      <motion.div
-        style={{ y, opacity }}
-        className="container mx-auto px-4 sm:px-6 text-center relative z-10"
-      >
+      <div className="container mx-auto px-4 sm:px-6 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -382,36 +292,16 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
             </div>
           </motion.div>
 
-          {/* Social Media Marquee (responsive) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="w-full overflow-x-hidden py-4 mb-8 sm:mb-12"
-          >
-            <motion.div
-              className="flex items-center gap-4 sm:gap-8"
-              animate={{ x: [0, -marqueeWidth] }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-                duration: 12,
-              }}
-              style={{ minWidth: "200vw" }}
-            >
-              {[...socialLinks, ...socialLinks].map((link, idx) => (
+          <div className="w-full py-4 mb-8 sm:mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+              {socialLinks.map((link) => (
                 <a
-                  key={link.href + idx}
+                  key={link.href}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group flex flex-col items-center justify-center px-3 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-br ${link.color} shadow-lg transition-all duration-100 hover:scale-110 hover:shadow-2xl border border-white/10 min-w-[80px] sm:min-w-[120px] max-w-[100px] sm:max-w-[140px] w-[80px] sm:w-[120px]`}
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  className={`group flex flex-col items-center justify-center px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-gradient-to-br ${link.color} shadow-md transition-all duration-200 hover:scale-105 border border-white/10 w-[100px] sm:w-[140px]`}
+                  style={{ textDecoration: "none" }}
                 >
                   {typeof link.icon === "string" ? (
                     <img
@@ -421,18 +311,15 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
                       style={{ width: 24, height: 24 }}
                     />
                   ) : (
-                    <link.icon
-                      size={24}
-                      className="mb-1 sm:mb-2 text-white transition-all duration-75 group-hover:scale-125"
-                    />
+                    <link.icon size={24} className="mb-1 sm:mb-2 text-white" />
                   )}
-                  <span className="text-white font-semibold text-xs sm:text-sm tracking-wide truncate w-full text-center">
+                  <span className="text-white font-semibold text-xs sm:text-sm tracking-wide text-center">
                     {link.label}
                   </span>
                 </a>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* CTA Buttons (responsive) */}
           <motion.div
@@ -488,7 +375,7 @@ const Hero: React.FC<HeroProps> = ({ isDark }) => {
             </a>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 };

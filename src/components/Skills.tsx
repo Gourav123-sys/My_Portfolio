@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import {
   Code,
   Database,
@@ -200,17 +200,7 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
           : "bg-gradient-to-br from-gray-50 via-white to-gray-50"
       }`}
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div
-          style={{ willChange: "transform, opacity" }}
-          className="absolute top-1/3 left-1/4 w-96 h-96 bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-full blur-3xl"
-        />
-        <div
-          style={{ willChange: "transform, opacity" }}
-          className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-r from-cyan-500/5 to-teal-500/5 rounded-full blur-3xl"
-        />
-      </div>
+      
 
       {/* Attach ref to a visible wrapper at the top of the section */}
       <div ref={ref} />
@@ -267,7 +257,7 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
           className="flex flex-wrap justify-center gap-4 mt-8"
         >
           {skillCategories.flatMap((cat) =>
-            cat.skills.map((skill, idx) => (
+            cat.skills.map((skill) => (
               <div
                 key={cat.title + skill.name}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-white shadow-md text-sm bg-gradient-to-r ${skill.color} cursor-pointer hover:scale-105 hover:-translate-y-1 transition-all duration-300`}
@@ -336,7 +326,7 @@ const Skills: React.FC<SkillsProps> = ({ isDark }) => {
           transition={{ duration: 0.7, delay: 0.7, ease: "easeInOut" }}
           className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 gap-y-6 justify-center items-stretch"
         >
-          {competitiveProgramming.map((platform, idx) => (
+          {competitiveProgramming.map((platform) => (
             <a
               key={platform.platform}
               href={platform.href}

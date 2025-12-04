@@ -161,7 +161,7 @@ const Footer: React.FC<FooterProps> = ({ isDark }) => {
               Quick Links
             </h3>
             <ul className="space-y-1 sm:space-y-2">
-              {quickLinks.map((link, index) => (
+              {quickLinks.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.href}
